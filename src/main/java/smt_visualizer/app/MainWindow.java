@@ -2,9 +2,11 @@ package smt_visualizer.app;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -108,7 +110,7 @@ public class MainWindow implements Listener {
 		GridData gd_ipAddress = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_ipAddress.widthHint = 200;
 		ipAddress.setLayoutData(gd_ipAddress);
-		
+
 		btnConnect = new Button(grpCassandraSettings, SWT.NONE);
 		btnConnect.setText("Connect");
 		btnConnect.addListener(SWT.Selection, this);
@@ -116,7 +118,7 @@ public class MainWindow implements Listener {
 		lblKeyspace = new Label(grpCassandraSettings, SWT.NONE);
 		lblKeyspace.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblKeyspace.setText("Keyspace");
-		
+
 		keyspace = new Combo(grpCassandraSettings, SWT.NONE);
 		keyspace.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		keyspace.addListener(SWT.Selection, this);
@@ -124,7 +126,7 @@ public class MainWindow implements Listener {
 		lblTableName = new Label(grpCassandraSettings, SWT.NONE);
 		lblTableName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblTableName.setText("Table name");
-		
+
 		tableName = new Combo(grpCassandraSettings, SWT.NONE);
 		tableName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		tableName.addListener(SWT.Selection, this);
@@ -215,47 +217,112 @@ public class MainWindow implements Listener {
 
 		if (widget == this.showDiagram) {
 
-			List<Date> timestamp = getTimestamp();
-			Map<String, List<Double>> data = getData();
+			final String timestampQuery = getTimestampQuery();
+			final String dataQuery = getDataQuery();
 
-			DefaultCategoryDataset dataset = DataCreator.createDataset(timestamp, data);
+			Thread createDiagramThread = new Thread(new Runnable() {
 
-			Plotter plotter = new Plotter(this.hostname.getText(), this.xAxisLabel.getText(), this.yAxisLabel.getText(),
-					600, 600);
-			plotter.plotData(dataset);
+				@Override
+				public void run() {
+					try {
+						final List<Date> timestamp = getTimestamp(timestampQuery);
+						final Map<String, List<Double>> data = getData(dataQuery);
 
-			plotter.pack();
-			RefineryUtilities.centerFrameOnScreen(plotter);
-			plotter.setVisible(true);
-			plotter.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+						shell.getDisplay().asyncExec(new Runnable() {
 
+							@Override
+							public void run() {
+								DefaultCategoryDataset dataset = DataCreator.createDataset(timestamp, data);
+
+								Plotter plotter = new Plotter(hostname.getText(), xAxisLabel.getText(),
+										yAxisLabel.getText(), 600, 600);
+								plotter.plotData(dataset);
+
+								plotter.pack();
+								RefineryUtilities.centerFrameOnScreen(plotter);
+								plotter.setVisible(true);
+								plotter.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+								showDiagram.setEnabled(true);
+								shell.layout();
+							}
+						});
+					} catch (Exception e) {
+						logger.error(e.getMessage());
+						shell.getDisplay().asyncExec(new Runnable() {
+
+							@Override
+							public void run() {
+								showDiagram.setEnabled(true);
+								shell.layout();
+							}
+						});
+					}
+				}
+			});
+
+			createDiagramThread.start();
+			this.showDiagram.setEnabled(false);
+			shell.layout();
 		} else if (widget == this.exportToCSV) {
 			String path = askUserForDirectory(this.shell, SWT.OPEN,
 					"Please select the directory to export the CSV file.", null);
-			
+
 			if (path == null) {
 				return;
 			}
-			
+
 			File csvFile = new File(path + "/" + hostname.getText() + ".csv");
-			
+
 			if (csvFile.exists()) {
 				csvFile.delete();
-			} 
-			
+			}
+
 			try {
 				csvFile.createNewFile();
 			} catch (IOException e) {
 				logger.error(e.getMessage());
 				return;
 			}
-			
-			ExportToCSV exporter = new ExportToCSV();
-			
-			List<Date> timestamp = getTimestamp();
-			Map<String, List<Double>> data = getData();
-			
-			exporter.exportToCSV(csvFile, timestamp, data, this.hostnameCol.getText(), this.hostname.getText(), this.timestampCol.getText());
+
+			final String timestampQuery = getTimestampQuery();
+			final String dataQuery = getDataQuery();
+
+			Thread exportToCSVThread = new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					try {
+						final List<Date> timestamp = getTimestamp(timestampQuery);
+						final Map<String, List<Double>> data = getData(dataQuery);
+
+						shell.getDisplay().asyncExec(new Runnable() {
+
+							@Override
+							public void run() {
+								ExportToCSV exporter = new ExportToCSV();
+								exporter.exportToCSV(csvFile, timestamp, data, hostnameCol.getText(),
+										hostname.getText(), timestampCol.getText());
+								exportToCSV.setEnabled(true);
+								shell.layout();
+							}
+						});
+					} catch (Exception e) {
+						logger.error(e.getMessage());
+						shell.getDisplay().asyncExec(new Runnable() {
+
+							@Override
+							public void run() {
+								exportToCSV.setEnabled(true);
+								shell.layout();
+							}
+						});
+					}
+				}
+			});
+
+			exportToCSVThread.start();
+			this.exportToCSV.setEnabled(false);
+			shell.layout();
 		} else if (widget == this.tableName) {
 			final String ipAddress = this.ipAddress.getText();
 			final String keyspace = this.keyspace.getText();
@@ -293,9 +360,9 @@ public class MainWindow implements Listener {
 			shell.layout();
 		} else if (widget == this.keyspace) {
 			this.cassandraConnection = new Cassandra(this.ipAddress.getText(), this.keyspace.getText());
-			
+
 			List<String> tables = cassandraConnection.getTables(this.keyspace.getText());
-			
+
 			this.tableName.removeAll();
 			this.hostname.removeAll();
 			this.timestampCol.removeAll();
@@ -303,13 +370,13 @@ public class MainWindow implements Listener {
 			for (String table : tables) {
 				this.tableName.add(table);
 			}
-			
+
 			shell.layout();
 		} else if (widget == this.btnConnect) {
 			this.cassandraConnection = new Cassandra(this.ipAddress.getText(), null);
-			
+
 			List<String> keyspaces = cassandraConnection.getKeyspaces();
-			
+
 			this.keyspace.removeAll();
 			this.tableName.removeAll();
 			this.hostname.removeAll();
@@ -318,13 +385,13 @@ public class MainWindow implements Listener {
 			for (String keyspace : keyspaces) {
 				this.keyspace.add(keyspace);
 			}
-			
+
 			shell.layout();
 		}
 	}
 
-	public List<Date> getTimestamp() {
-		
+	public Date getStartDate() {
+
 		Calendar startCal = GregorianCalendar.getInstance();
 		startCal.set(Calendar.YEAR, startDate.getYear());
 		startCal.set(Calendar.MONTH, startDate.getMonth());
@@ -334,6 +401,10 @@ public class MainWindow implements Listener {
 		startCal.set(Calendar.MINUTE, startTime.getMinutes());
 		startCal.set(Calendar.SECOND, startTime.getSeconds());
 
+		return startCal.getTime();
+	}
+
+	public Date getEndDate() {
 		Calendar endCal = GregorianCalendar.getInstance();
 		endCal.set(Calendar.YEAR, endDate.getYear());
 		endCal.set(Calendar.MONTH, endDate.getMonth());
@@ -343,38 +414,33 @@ public class MainWindow implements Listener {
 		endCal.set(Calendar.MINUTE, endTime.getMinutes());
 		endCal.set(Calendar.SECOND, endTime.getSeconds());
 
-		final String timestampQuery = QueryCreator.createQuery(startCal.getTime(), endCal.getTime(),
-				this.hostname.getText(), this.hostnameCol.getText(), this.keyspace.getText(), this.tableName.getText(),
-				this.timestampCol.getText(), this.timestampCol.getText());
+		return endCal.getTime();
+	}
 
+	public String getTimestampQuery() {
+		return QueryCreator.createQuery(getStartDate(), getEndDate(), this.hostname.getText(),
+				this.hostnameCol.getText(), this.keyspace.getText(), this.tableName.getText(),
+				this.timestampCol.getText(), this.timestampCol.getText());
+	}
+
+	public String getDataQuery() {
+		return QueryCreator.createQuery(getStartDate(), getEndDate(), this.hostname.getText(),
+				this.hostnameCol.getText(), this.keyspace.getText(), this.tableName.getText(),
+				this.timestampCol.getText(), this.cols.getSelection());
+	}
+
+	public List<Date> getTimestamp(String timestampQuery) {
+		if (cassandraConnection == null) {
+			return new ArrayList<>();
+		}
 		return cassandraConnection.readTimestamp(timestampQuery);
 	}
 
-	public Map<String, List<Double>> getData() {
-
-		Calendar startCal = GregorianCalendar.getInstance();
-		startCal.set(Calendar.YEAR, startDate.getYear());
-		startCal.set(Calendar.MONTH, startDate.getMonth());
-		startCal.set(Calendar.DAY_OF_MONTH, startDate.getDay());
-
-		startCal.set(Calendar.HOUR_OF_DAY, startTime.getHours());
-		startCal.set(Calendar.MINUTE, startTime.getMinutes());
-		startCal.set(Calendar.SECOND, startTime.getSeconds());
-
-		Calendar endCal = GregorianCalendar.getInstance();
-		endCal.set(Calendar.YEAR, endDate.getYear());
-		endCal.set(Calendar.MONTH, endDate.getMonth());
-		endCal.set(Calendar.DAY_OF_MONTH, endDate.getDay());
-
-		endCal.set(Calendar.HOUR_OF_DAY, endTime.getHours());
-		endCal.set(Calendar.MINUTE, endTime.getMinutes());
-		endCal.set(Calendar.SECOND, endTime.getSeconds());
-
-		final String query = QueryCreator.createQuery(startCal.getTime(), endCal.getTime(), this.hostname.getText(),
-				this.hostnameCol.getText(), this.keyspace.getText(), this.tableName.getText(),
-				this.timestampCol.getText(), this.cols.getSelection());
-
-		return cassandraConnection.readDataFromCassandra(query);
+	public Map<String, List<Double>> getData(String dataQuery) {
+		if (cassandraConnection == null) {
+			return new HashMap<>();
+		}
+		return cassandraConnection.readDataFromCassandra(dataQuery);
 	}
 
 	public static final String askUserForDirectory(final Shell shell, final int style, final String title,

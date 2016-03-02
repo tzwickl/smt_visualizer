@@ -16,9 +16,9 @@ import org.jfree.data.category.DefaultCategoryDataset;
  *
  */
 public final class Plotter extends JFrame {
-	
+
 	private static final long serialVersionUID = 7858985943978175470L;
-	
+
 	private String xAxisTitle;
 	private String yAxisTitle;
 	private int xDim;
@@ -33,8 +33,8 @@ public final class Plotter extends JFrame {
 	}
 
 	public void plotData(DefaultCategoryDataset dataset) {
-		JFreeChart lineChart = ChartFactory.createLineChart(super.getTitle(), this.xAxisTitle, this.yAxisTitle,
-				dataset, PlotOrientation.VERTICAL, true, true, true);
+		JFreeChart lineChart = ChartFactory.createLineChart(super.getTitle(), this.xAxisTitle, this.yAxisTitle, dataset,
+				PlotOrientation.VERTICAL, true, true, true);
 
 		ChartPanel chartPanel = new ChartPanel(lineChart);
 		chartPanel.setPreferredSize(new Dimension(xDim, yDim));

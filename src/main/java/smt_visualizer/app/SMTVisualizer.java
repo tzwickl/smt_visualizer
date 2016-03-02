@@ -20,9 +20,9 @@ class SMTVisualizer {
 		logger.info("SMTVisualizer started with the following arguments: " + Arrays.toString(args));
 		CommandLineInterfaceService cliService = new CommandLineInterfaceService();
 		cliService.parseArgsAndCreateConfig(args);
-		
+
 		MainWindow mainWindow = new MainWindow();
-		
+
 		mainWindow.openWindow();
 	}
 }
