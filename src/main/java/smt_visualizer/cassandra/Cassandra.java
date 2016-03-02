@@ -32,7 +32,11 @@ public class Cassandra {
 
 	public Cassandra(String host, String keyspace) {
 		this.cluster = Cluster.builder().addContactPoint(host).build();
-		this.session = cluster.connect(keyspace);
+		if (keyspace == null) {
+			this.session = cluster.connect();
+		} else {
+			this.session = cluster.connect(keyspace);
+		}
 	}
 
 	public Map<String, List<Double>> readDataFromCassandra(String query) {
@@ -93,27 +97,47 @@ public class Cassandra {
 		return list;
 	}
 
+	public List<String> getKeyspaces() {
+		ResultSet results = session.execute(QueryCreator.createKeyspaceQuery());
+
+		List<String> keyspace = new ArrayList<String>();
+		for (Row row : results) {
+			keyspace.add(row.getString(0));
+		}
+
+		return keyspace;
+	}
+
+	public List<String> getTables(String keyspace) {
+		ResultSet results = session.execute(QueryCreator.createTableQuery(keyspace));
+
+		List<String> tables = new ArrayList<String>();
+		for (Row row : results) {
+			tables.add(row.getString(0));
+		}
+
+		return tables;
+	}
+
 	public List<String> getColumns(String keyspace, String table) {
-		ResultSet results = session
-				.execute(QueryCreator.createColumnNamesQuery(keyspace, table));
-		
+		ResultSet results = session.execute(QueryCreator.createColumnNamesQuery(keyspace, table));
+
 		List<String> cols = new ArrayList<String>();
 		for (Row row : results) {
 			cols.add(row.getString(0));
 		}
-		
+
 		return cols;
 	}
-	
+
 	public Set<String> getHostNames(String keyspace, String table, String column) {
-		ResultSet results = session
-				.execute(QueryCreator.createHostNamesQuery(column, keyspace, table));
-		
+		ResultSet results = session.execute(QueryCreator.createHostNamesQuery(column, keyspace, table));
+
 		Set<String> hostNames = new HashSet<String>();
 		for (Row row : results) {
 			hostNames.add(row.getString(0));
 		}
-		
+
 		return hostNames;
 	}
 }

@@ -47,7 +47,6 @@ public class MainWindow implements Listener {
 	private Button showDiagram;
 	private Button exportToCSV;
 	private Label lblTimestamp;
-	private Thread queryThread;
 	private Label lblXaxis;
 	private Text xAxisLabel;
 	private Label lblYaxisLabel;
@@ -60,10 +59,7 @@ public class MainWindow implements Listener {
 	private Label lblIpaddress;
 	private Text ipAddress;
 	private Label lblKeyspace;
-	private Text keyspace;
 	private Label lblTableName;
-	private Text tableName;
-	private Button connect;
 
 	private Cassandra cassandraConnection;
 	private Combo hostname;
@@ -71,6 +67,9 @@ public class MainWindow implements Listener {
 	private Combo timestampCol;
 	private org.eclipse.swt.widgets.List cols;
 	private Shell shell;
+	private Combo tableName;
+	private Combo keyspace;
+	private Button btnConnect;
 
 	/**
 	 * @wbp.parser.entryPoint
@@ -98,8 +97,8 @@ public class MainWindow implements Listener {
 		endTime = new DateTime(shell, SWT.BORDER | SWT.TIME);
 
 		grpCassandraSettings = new Group(shell, SWT.NONE);
-		grpCassandraSettings.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1));
-		grpCassandraSettings.setLayout(new GridLayout(2, false));
+		grpCassandraSettings.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 6, 1));
+		grpCassandraSettings.setLayout(new GridLayout(3, false));
 		grpCassandraSettings.setText("Cassandra Settings");
 
 		lblIpaddress = new Label(grpCassandraSettings, SWT.NONE);
@@ -109,31 +108,26 @@ public class MainWindow implements Listener {
 		GridData gd_ipAddress = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_ipAddress.widthHint = 200;
 		ipAddress.setLayoutData(gd_ipAddress);
+		
+		btnConnect = new Button(grpCassandraSettings, SWT.NONE);
+		btnConnect.setText("Connect");
+		btnConnect.addListener(SWT.Selection, this);
 
 		lblKeyspace = new Label(grpCassandraSettings, SWT.NONE);
+		lblKeyspace.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblKeyspace.setText("Keyspace");
-
-		keyspace = new Text(grpCassandraSettings, SWT.BORDER);
-		GridData gd_keyspace = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_keyspace.widthHint = 200;
-		keyspace.setLayoutData(gd_keyspace);
+		
+		keyspace = new Combo(grpCassandraSettings, SWT.NONE);
+		keyspace.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		keyspace.addListener(SWT.Selection, this);
 
 		lblTableName = new Label(grpCassandraSettings, SWT.NONE);
+		lblTableName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblTableName.setText("Table name");
-
-		tableName = new Text(grpCassandraSettings, SWT.BORDER);
-		tableName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		new Label(shell, SWT.NONE);
-		new Label(shell, SWT.NONE);
-		new Label(shell, SWT.NONE);
-
-		connect = new Button(shell, SWT.NONE);
-		connect.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 3, 1));
-		connect.setText("Connect");
-		connect.addListener(SWT.Selection, this);
-		new Label(shell, SWT.NONE);
-		new Label(shell, SWT.NONE);
-		new Label(shell, SWT.NONE);
+		
+		tableName = new Combo(grpCassandraSettings, SWT.NONE);
+		tableName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		tableName.addListener(SWT.Selection, this);
 
 		grpInputSettings = new Group(shell, SWT.NONE);
 		grpInputSettings.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 6, 1));
@@ -262,7 +256,7 @@ public class MainWindow implements Listener {
 			Map<String, List<Double>> data = getData();
 			
 			exporter.exportToCSV(csvFile, timestamp, data, this.hostnameCol.getText(), this.hostname.getText(), this.timestampCol.getText());
-		} else if (widget == this.connect) {
+		} else if (widget == this.tableName) {
 			final String ipAddress = this.ipAddress.getText();
 			final String keyspace = this.keyspace.getText();
 			final String tableName = this.tableName.getText();
@@ -296,6 +290,35 @@ public class MainWindow implements Listener {
 				this.hostname.add(hostName);
 			}
 
+			shell.layout();
+		} else if (widget == this.keyspace) {
+			this.cassandraConnection = new Cassandra(this.ipAddress.getText(), this.keyspace.getText());
+			
+			List<String> tables = cassandraConnection.getTables(this.keyspace.getText());
+			
+			this.tableName.removeAll();
+			this.hostname.removeAll();
+			this.timestampCol.removeAll();
+			this.cols.removeAll();
+			for (String table : tables) {
+				this.tableName.add(table);
+			}
+			
+			shell.layout();
+		} else if (widget == this.btnConnect) {
+			this.cassandraConnection = new Cassandra(this.ipAddress.getText(), null);
+			
+			List<String> keyspaces = cassandraConnection.getKeyspaces();
+			
+			this.keyspace.removeAll();
+			this.tableName.removeAll();
+			this.hostname.removeAll();
+			this.timestampCol.removeAll();
+			this.cols.removeAll();
+			for (String keyspace : keyspaces) {
+				this.keyspace.add(keyspace);
+			}
+			
 			shell.layout();
 		}
 	}

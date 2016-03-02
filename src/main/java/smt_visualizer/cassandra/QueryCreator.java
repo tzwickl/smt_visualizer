@@ -32,4 +32,12 @@ public class QueryCreator {
 		return "SELECT column_name FROM system.schema_columns WHERE keyspace_name = \'" + keyspace
 				+ "\' AND columnfamily_name = \'" + table + "\';";
 	}
+	
+	public static String createKeyspaceQuery() {
+		return "SELECT keyspace_name FROM system.schema_columnfamilies;";
+	}
+	
+	public static String createTableQuery(String keyspace) {
+		return "SELECT columnfamily_name FROM system.schema_columnfamilies WHERE keyspace_name = \'" + keyspace + "\';";
+	}
 }
