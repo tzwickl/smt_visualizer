@@ -4,7 +4,7 @@ public String getSWTWindowingLibrary(String platform) {
     case ~/.*darwin.*/: return 'cocoa'
     case ~/.*osx.*/:    return 'cocoa'
     case ~/.*win.*/:    return 'win32'
-    default:            return null
+    default:            throw new Exception('Unknown OS')
   }
 }
 
@@ -21,7 +21,7 @@ public String getSWTPlatform(String platform) {
     case ~/.*darwin.*/: return 'macosx'
     case ~/.*osx.*/:    return 'macosx'
     case ~/.*win.*/:    return 'win32'
-    default:            return platform
+    default:            throw new Exception('Unknown OS')
   }
 }
 

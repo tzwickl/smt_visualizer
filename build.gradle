@@ -35,12 +35,16 @@ ext {
 	slf4j_version = "1.7.13"
 	slf4j_simple_version = "1.7.18"
 	commons_cli_version = "1.3.1"
-	freechart_version = "1.0.13"
 	datastax_version = "3.0.0"
+	
+	// test
 	junit_version = "4.12"
 	
-	swtVersion = '4.3'
-  	swtArtifactName = "org.eclipse.swt.${swtWindowingLibrary}.${swtPlatform}.${swtArch}"
+	// UI dependencies
+	swt_version = "3.3.0-v3346"
+	swt_os_version = '4.3'
+  	swt_artifact_name = "org.eclipse.swt.${swtWindowingLibrary}.${swtPlatform}.${swtArch}"
+  	freechart_version = "1.0.13"
 }
 
 // In this section you declare the dependencies for your production and test code
@@ -51,12 +55,11 @@ dependencies {
     
     compile "commons-cli:commons-cli:${commons_cli_version}"
     
-    compile "jfree:jfreechart:${freechart_version}"
-    
     compile "com.datastax.cassandra:cassandra-driver-core:${datastax_version}"
     
-    compile 'org.eclipse:swt:3.3.0-v3346'
-    compile "org.eclipse.swt:${swtArtifactName}:${swtVersion}"
+    compile "org.eclipse:swt:${swt_version}"
+    compile "org.eclipse.swt:${swt_artifact_name}:${swt_os_version}"
+    compile "jfree:jfreechart:${freechart_version}"
     
     // Declare the dependency for your favourite test framework you want to use in your tests.
     // TestNG is also supported by the Gradle Test task. Just change the
