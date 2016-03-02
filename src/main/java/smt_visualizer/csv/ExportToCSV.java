@@ -15,12 +15,14 @@ public class ExportToCSV {
 	private static final Logger logger = LoggerFactory.getLogger(ExportToCSV.class);
 	private String seperator = ";";
 	
-	public void exportToCSV(File targetFile, List<Date> timestamp, Map<String, List<Double>> data) {
+	public void exportToCSV(File targetFile, List<Date> timestamp, Map<String, List<Double>> data, String hostnameCol, String hostname, String timestampCol) {
 		try {
 			FileWriter writer = new FileWriter(targetFile);
 			
 			StringBuilder stringBuilder = new StringBuilder();
 			String del = "";
+			
+			stringBuilder.append(hostnameCol).append(seperator).append(timestampCol).append(seperator);
 			
 			for (String header : data.keySet()) {
 				stringBuilder.append(del).append(header);
@@ -33,6 +35,7 @@ public class ExportToCSV {
 			for (int row = 0; row < timestamp.size(); row++) {
 				stringBuilder = new StringBuilder();
 				del = "";
+				stringBuilder.append(hostname).append(seperator).append(timestamp.get(row)).append(seperator);
 				for (List<Double> vals : data.values()) {
 					stringBuilder.append(del).append(vals.get(row));
 					del = seperator;

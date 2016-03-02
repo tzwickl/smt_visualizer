@@ -261,7 +261,7 @@ public class MainWindow implements Listener {
 			List<Date> timestamp = getTimestamp();
 			Map<String, List<Double>> data = getData();
 			
-			exporter.exportToCSV(csvFile, timestamp, data);
+			exporter.exportToCSV(csvFile, timestamp, data, this.hostnameCol.getText(), this.hostname.getText(), this.timestampCol.getText());
 		} else if (widget == this.connect) {
 			final String ipAddress = this.ipAddress.getText();
 			final String keyspace = this.keyspace.getText();
