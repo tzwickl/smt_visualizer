@@ -79,141 +79,143 @@ public class MainWindow implements Listener {
 	 */
 	public void openWindow() {
 		Display display = new Display();
-		shell = new Shell(display);
-		shell.setText("SMT Visualizer");
-		shell.setSize(643, 705);
+		this.shell = new Shell(display);
+		this.shell.setText("SMT Visualizer");
+		this.shell.setSize(643, 705);
 		GridLayout gl_shell = new GridLayout(6, false);
-		shell.setLayout(gl_shell);
+		this.shell.setLayout(gl_shell);
 
-		Label lblNewLabel = new Label(shell, SWT.NONE);
+		Label lblNewLabel = new Label(this.shell, SWT.NONE);
 		lblNewLabel.setText("Start Time:");
 
-		startDate = new DateTime(shell, SWT.BORDER | SWT.CALENDAR);
+		this.startDate = new DateTime(this.shell, SWT.BORDER | SWT.CALENDAR);
 
-		startTime = new DateTime(shell, SWT.BORDER | SWT.TIME);
+		this.startTime = new DateTime(this.shell, SWT.BORDER | SWT.TIME);
 
-		Label lblEndTime = new Label(shell, SWT.NONE);
+		Label lblEndTime = new Label(this.shell, SWT.NONE);
 		lblEndTime.setText("End Time:");
 
-		endDate = new DateTime(shell, SWT.BORDER | SWT.CALENDAR);
+		this.endDate = new DateTime(this.shell, SWT.BORDER | SWT.CALENDAR);
 
-		endTime = new DateTime(shell, SWT.BORDER | SWT.TIME);
+		this.endTime = new DateTime(this.shell, SWT.BORDER | SWT.TIME);
 
-		grpCassandraSettings = new Group(shell, SWT.NONE);
-		grpCassandraSettings.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 6, 1));
-		grpCassandraSettings.setLayout(new GridLayout(3, false));
-		grpCassandraSettings.setText("Cassandra Settings");
+		this.grpCassandraSettings = new Group(this.shell, SWT.NONE);
+		this.grpCassandraSettings.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 6, 1));
+		this.grpCassandraSettings.setLayout(new GridLayout(3, false));
+		this.grpCassandraSettings.setText("Cassandra Settings");
 
-		lblIpaddress = new Label(grpCassandraSettings, SWT.NONE);
-		lblIpaddress.setText("IP-Address");
+		this.lblIpaddress = new Label(this.grpCassandraSettings, SWT.NONE);
+		this.lblIpaddress.setText("IP-Address");
 
-		ipAddress = new Text(grpCassandraSettings, SWT.BORDER);
+		this.ipAddress = new Text(this.grpCassandraSettings, SWT.BORDER);
 		GridData gd_ipAddress = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_ipAddress.widthHint = 200;
-		ipAddress.setLayoutData(gd_ipAddress);
+		this.ipAddress.setLayoutData(gd_ipAddress);
 
-		btnConnect = new Button(grpCassandraSettings, SWT.NONE);
-		btnConnect.setText("Connect");
-		btnConnect.addListener(SWT.Selection, this);
+		this.btnConnect = new Button(this.grpCassandraSettings, SWT.NONE);
+		this.btnConnect.setText("Connect");
+		this.btnConnect.addListener(SWT.Selection, this);
 
-		lblKeyspace = new Label(grpCassandraSettings, SWT.NONE);
-		lblKeyspace.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblKeyspace.setText("Keyspace");
+		this.lblKeyspace = new Label(this.grpCassandraSettings, SWT.NONE);
+		this.lblKeyspace.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		this.lblKeyspace.setText("Keyspace");
 
-		keyspace = new Combo(grpCassandraSettings, SWT.NONE);
-		keyspace.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
-		keyspace.addListener(SWT.Selection, this);
+		this.keyspace = new Combo(this.grpCassandraSettings, SWT.NONE);
+		this.keyspace.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		this.keyspace.addListener(SWT.Selection, this);
 
-		lblTableName = new Label(grpCassandraSettings, SWT.NONE);
-		lblTableName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblTableName.setText("Table name");
+		this.lblTableName = new Label(this.grpCassandraSettings, SWT.NONE);
+		this.lblTableName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		this.lblTableName.setText("Table name");
 
-		tableName = new Combo(grpCassandraSettings, SWT.NONE);
-		tableName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
-		tableName.addListener(SWT.Selection, this);
+		this.tableName = new Combo(this.grpCassandraSettings, SWT.NONE);
+		this.tableName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		this.tableName.addListener(SWT.Selection, this);
 
-		grpInputSettings = new Group(shell, SWT.NONE);
-		grpInputSettings.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 6, 1));
-		grpInputSettings.setText("Input Settings");
-		grpInputSettings.setLayout(new GridLayout(2, false));
+		this.grpInputSettings = new Group(this.shell, SWT.NONE);
+		this.grpInputSettings.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 6, 1));
+		this.grpInputSettings.setText("Input Settings");
+		this.grpInputSettings.setLayout(new GridLayout(2, false));
 
-		lblHostnameCol = new Label(grpInputSettings, SWT.NONE);
-		lblHostnameCol.setText("Hostname Col:");
+		this.lblHostnameCol = new Label(this.grpInputSettings, SWT.NONE);
+		this.lblHostnameCol.setText("Hostname Col:");
 
-		hostnameCol = new Combo(grpInputSettings, SWT.NONE);
+		this.hostnameCol = new Combo(this.grpInputSettings, SWT.NONE);
 		GridData gd_hostnameCol = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
 		gd_hostnameCol.widthHint = 400;
-		hostnameCol.setLayoutData(gd_hostnameCol);
-		hostnameCol.addListener(SWT.Selection, this);
+		this.hostnameCol.setLayoutData(gd_hostnameCol);
+		this.hostnameCol.addListener(SWT.Selection, this);
 
-		lblHostname = new Label(grpInputSettings, SWT.NONE);
-		lblHostname.setText("Hostname:");
+		this.lblHostname = new Label(this.grpInputSettings, SWT.NONE);
+		this.lblHostname.setText("Hostname:");
 
-		hostname = new Combo(grpInputSettings, SWT.NONE);
-		hostname.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		this.hostname = new Combo(this.grpInputSettings, SWT.NONE);
+		this.hostname.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-		lblTimestamp = new Label(grpInputSettings, SWT.NONE);
-		lblTimestamp.setText("Timestamp Col:");
+		this.lblTimestamp = new Label(this.grpInputSettings, SWT.NONE);
+		this.lblTimestamp.setText("Timestamp Col:");
 
-		timestampCol = new Combo(grpInputSettings, SWT.NONE);
-		timestampCol.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		this.timestampCol = new Combo(this.grpInputSettings, SWT.NONE);
+		this.timestampCol.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
-		Label lblTables = new Label(grpInputSettings, SWT.NONE);
+		Label lblTables = new Label(this.grpInputSettings, SWT.NONE);
 		lblTables.setText("Columns:");
 
-		cols = new org.eclipse.swt.widgets.List(grpInputSettings, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
+		this.cols = new org.eclipse.swt.widgets.List(this.grpInputSettings,
+				SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
 		GridData gd_cols = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_cols.heightHint = 100;
 		gd_cols.widthHint = 400;
-		cols.setLayoutData(gd_cols);
+		this.cols.setLayoutData(gd_cols);
 
-		grpDiagramSettings = new Group(shell, SWT.NONE);
-		grpDiagramSettings.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1));
-		grpDiagramSettings.setText("Diagram Settings");
-		grpDiagramSettings.setLayout(new GridLayout(2, false));
+		this.grpDiagramSettings = new Group(this.shell, SWT.NONE);
+		this.grpDiagramSettings.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1));
+		this.grpDiagramSettings.setText("Diagram Settings");
+		this.grpDiagramSettings.setLayout(new GridLayout(2, false));
 
-		lblXaxis = new Label(grpDiagramSettings, SWT.NONE);
-		lblXaxis.setText("x-Axis Label:");
+		this.lblXaxis = new Label(this.grpDiagramSettings, SWT.NONE);
+		this.lblXaxis.setText("x-Axis Label:");
 
-		xAxisLabel = new Text(grpDiagramSettings, SWT.BORDER);
+		this.xAxisLabel = new Text(this.grpDiagramSettings, SWT.BORDER);
 		GridData gd_xAxisLabel = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_xAxisLabel.widthHint = 200;
-		xAxisLabel.setLayoutData(gd_xAxisLabel);
+		this.xAxisLabel.setLayoutData(gd_xAxisLabel);
 
-		lblYaxisLabel = new Label(grpDiagramSettings, SWT.NONE);
-		lblYaxisLabel.setText("y-Axis Label:");
+		this.lblYaxisLabel = new Label(this.grpDiagramSettings, SWT.NONE);
+		this.lblYaxisLabel.setText("y-Axis Label:");
 
-		yAxisLabel = new Text(grpDiagramSettings, SWT.BORDER);
+		this.yAxisLabel = new Text(this.grpDiagramSettings, SWT.BORDER);
 		GridData gd_yAxisLabel = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_yAxisLabel.widthHint = 200;
-		yAxisLabel.setLayoutData(gd_yAxisLabel);
-		new Label(shell, SWT.NONE);
-		new Label(shell, SWT.NONE);
-		new Label(shell, SWT.NONE);
-		new Label(shell, SWT.NONE);
-		new Label(shell, SWT.NONE);
+		this.yAxisLabel.setLayoutData(gd_yAxisLabel);
+		new Label(this.shell, SWT.NONE);
+		new Label(this.shell, SWT.NONE);
+		new Label(this.shell, SWT.NONE);
+		new Label(this.shell, SWT.NONE);
+		new Label(this.shell, SWT.NONE);
 
-		exportToCSV = new Button(shell, SWT.NONE);
-		exportToCSV.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 2, 1));
-		exportToCSV.setText("Export to CSV");
-		exportToCSV.addListener(SWT.Selection, this);
+		this.exportToCSV = new Button(this.shell, SWT.NONE);
+		this.exportToCSV.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 2, 1));
+		this.exportToCSV.setText("Export to CSV");
+		this.exportToCSV.addListener(SWT.Selection, this);
 
-		showDiagram = new Button(shell, SWT.NONE);
-		showDiagram.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
-		showDiagram.addListener(SWT.Selection, this);
-		showDiagram.setText("Show Diagram");
-		new Label(shell, SWT.NONE);
-		shell.open();
+		this.showDiagram = new Button(this.shell, SWT.NONE);
+		this.showDiagram.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		this.showDiagram.addListener(SWT.Selection, this);
+		this.showDiagram.setText("Show Diagram");
+		new Label(this.shell, SWT.NONE);
+		this.shell.open();
 
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch())
+		while (!this.shell.isDisposed()) {
+			if (!display.readAndDispatch()) {
 				display.sleep();
+			}
 		}
 		display.dispose();
 	}
 
 	@Override
-	public void handleEvent(Event event) {
+	public void handleEvent(final Event event) {
 		Widget widget = event.widget;
 
 		if (widget == this.showDiagram) {
@@ -229,32 +231,33 @@ public class MainWindow implements Listener {
 						final List<Date> timestamp = getTimestamp(timestampQuery);
 						final Map<String, List<Number>> data = getData(dataQuery);
 
-						shell.getDisplay().asyncExec(new Runnable() {
+						MainWindow.this.shell.getDisplay().asyncExec(new Runnable() {
 
 							@Override
 							public void run() {
 								DefaultCategoryDataset dataset = DataCreator.createDataset(timestamp, data);
 
-								Plotter plotter = new Plotter(hostname.getText(), xAxisLabel.getText(),
-										yAxisLabel.getText(), 600, 600);
+								Plotter plotter = new Plotter(MainWindow.this.hostname.getText(),
+										MainWindow.this.xAxisLabel.getText(), MainWindow.this.yAxisLabel.getText(), 600,
+										600);
 								plotter.plotData(dataset);
 
 								plotter.pack();
 								RefineryUtilities.centerFrameOnScreen(plotter);
 								plotter.setVisible(true);
 								plotter.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-								showDiagram.setEnabled(true);
-								shell.layout();
+								MainWindow.this.showDiagram.setEnabled(true);
+								MainWindow.this.shell.layout();
 							}
 						});
 					} catch (Exception e) {
 						logger.error(e.getMessage());
-						shell.getDisplay().asyncExec(new Runnable() {
+						MainWindow.this.shell.getDisplay().asyncExec(new Runnable() {
 
 							@Override
 							public void run() {
-								showDiagram.setEnabled(true);
-								shell.layout();
+								MainWindow.this.showDiagram.setEnabled(true);
+								MainWindow.this.shell.layout();
 							}
 						});
 					}
@@ -263,7 +266,7 @@ public class MainWindow implements Listener {
 
 			createDiagramThread.start();
 			this.showDiagram.setEnabled(false);
-			shell.layout();
+			this.shell.layout();
 		} else if (widget == this.exportToCSV) {
 			String path = askUserForDirectory(this.shell, SWT.OPEN,
 					"Please select the directory to export the CSV file.", null);
@@ -272,7 +275,7 @@ public class MainWindow implements Listener {
 				return;
 			}
 
-			File csvFile = new File(path + "/" + hostname.getText() + ".csv");
+			final File csvFile = new File(path + "/" + this.hostname.getText() + ".csv");
 
 			if (csvFile.exists()) {
 				csvFile.delete();
@@ -296,25 +299,25 @@ public class MainWindow implements Listener {
 						final List<Date> timestamp = getTimestamp(timestampQuery);
 						final Map<String, List<Number>> data = getData(dataQuery);
 
-						shell.getDisplay().asyncExec(new Runnable() {
+						MainWindow.this.shell.getDisplay().asyncExec(new Runnable() {
 
 							@Override
 							public void run() {
 								ExportToCSV exporter = new ExportToCSV();
-								exporter.exportToCSV(csvFile, timestamp, data, hostnameCol.getText(),
-										hostname.getText(), timestampCol.getText());
-								exportToCSV.setEnabled(true);
-								shell.layout();
+								exporter.exportToCSV(csvFile, timestamp, data, MainWindow.this.hostnameCol.getText(),
+										MainWindow.this.hostname.getText(), MainWindow.this.timestampCol.getText());
+								MainWindow.this.exportToCSV.setEnabled(true);
+								MainWindow.this.shell.layout();
 							}
 						});
 					} catch (Exception e) {
 						logger.error(e.getMessage());
-						shell.getDisplay().asyncExec(new Runnable() {
+						MainWindow.this.shell.getDisplay().asyncExec(new Runnable() {
 
 							@Override
 							public void run() {
-								exportToCSV.setEnabled(true);
-								shell.layout();
+								MainWindow.this.exportToCSV.setEnabled(true);
+								MainWindow.this.shell.layout();
 							}
 						});
 					}
@@ -323,46 +326,46 @@ public class MainWindow implements Listener {
 
 			exportToCSVThread.start();
 			this.exportToCSV.setEnabled(false);
-			shell.layout();
+			this.shell.layout();
 		} else if (widget == this.tableName) {
 			final String ipAddress = this.ipAddress.getText();
 			final String keyspace = this.keyspace.getText();
 			final String tableName = this.tableName.getText();
 
-			databaseConnection = new Cassandra(ipAddress, keyspace);
-			List<String> colNames = databaseConnection.getColumns(keyspace, tableName);
+			this.databaseConnection = new Cassandra(ipAddress, keyspace);
+			List<String> colNames = this.databaseConnection.getColumns(keyspace, tableName);
 
-			hostnameCol.removeAll();
+			this.hostnameCol.removeAll();
 			for (String colName : colNames) {
 				this.hostnameCol.add(colName);
 			}
 
-			timestampCol.removeAll();
+			this.timestampCol.removeAll();
 			for (String colName : colNames) {
 				this.timestampCol.add(colName);
 			}
 
-			cols.removeAll();
+			this.cols.removeAll();
 			for (String colName : colNames) {
 				this.cols.add(colName);
 			}
 
-			shell.layout();
+			this.shell.layout();
 
 		} else if (widget == this.hostnameCol) {
-			Set<String> hostNames = databaseConnection.getHostNames(this.keyspace.getText(), this.tableName.getText(),
-					this.hostnameCol.getText());
+			Set<String> hostNames = this.databaseConnection.getHostNames(this.keyspace.getText(),
+					this.tableName.getText(), this.hostnameCol.getText());
 
-			hostname.removeAll();
+			this.hostname.removeAll();
 			for (String hostName : hostNames) {
 				this.hostname.add(hostName);
 			}
 
-			shell.layout();
+			this.shell.layout();
 		} else if (widget == this.keyspace) {
 			this.databaseConnection = new Cassandra(this.ipAddress.getText(), this.keyspace.getText());
 
-			List<String> tables = databaseConnection.getTables(this.keyspace.getText());
+			List<String> tables = this.databaseConnection.getTables(this.keyspace.getText());
 
 			this.tableName.removeAll();
 			this.hostname.removeAll();
@@ -372,11 +375,11 @@ public class MainWindow implements Listener {
 				this.tableName.add(table);
 			}
 
-			shell.layout();
+			this.shell.layout();
 		} else if (widget == this.btnConnect) {
 			this.databaseConnection = new Cassandra(this.ipAddress.getText(), null);
 
-			Set<String> keyspaces = databaseConnection.getKeyspaces();
+			Set<String> keyspaces = this.databaseConnection.getKeyspaces();
 
 			this.keyspace.removeAll();
 			this.tableName.removeAll();
@@ -387,33 +390,33 @@ public class MainWindow implements Listener {
 				this.keyspace.add(keyspace);
 			}
 
-			shell.layout();
+			this.shell.layout();
 		}
 	}
 
 	public Date getStartDate() {
 
 		Calendar startCal = GregorianCalendar.getInstance();
-		startCal.set(Calendar.YEAR, startDate.getYear());
-		startCal.set(Calendar.MONTH, startDate.getMonth());
-		startCal.set(Calendar.DAY_OF_MONTH, startDate.getDay());
+		startCal.set(Calendar.YEAR, this.startDate.getYear());
+		startCal.set(Calendar.MONTH, this.startDate.getMonth());
+		startCal.set(Calendar.DAY_OF_MONTH, this.startDate.getDay());
 
-		startCal.set(Calendar.HOUR_OF_DAY, startTime.getHours());
-		startCal.set(Calendar.MINUTE, startTime.getMinutes());
-		startCal.set(Calendar.SECOND, startTime.getSeconds());
+		startCal.set(Calendar.HOUR_OF_DAY, this.startTime.getHours());
+		startCal.set(Calendar.MINUTE, this.startTime.getMinutes());
+		startCal.set(Calendar.SECOND, this.startTime.getSeconds());
 
 		return startCal.getTime();
 	}
 
 	public Date getEndDate() {
 		Calendar endCal = GregorianCalendar.getInstance();
-		endCal.set(Calendar.YEAR, endDate.getYear());
-		endCal.set(Calendar.MONTH, endDate.getMonth());
-		endCal.set(Calendar.DAY_OF_MONTH, endDate.getDay());
+		endCal.set(Calendar.YEAR, this.endDate.getYear());
+		endCal.set(Calendar.MONTH, this.endDate.getMonth());
+		endCal.set(Calendar.DAY_OF_MONTH, this.endDate.getDay());
 
-		endCal.set(Calendar.HOUR_OF_DAY, endTime.getHours());
-		endCal.set(Calendar.MINUTE, endTime.getMinutes());
-		endCal.set(Calendar.SECOND, endTime.getSeconds());
+		endCal.set(Calendar.HOUR_OF_DAY, this.endTime.getHours());
+		endCal.set(Calendar.MINUTE, this.endTime.getMinutes());
+		endCal.set(Calendar.SECOND, this.endTime.getSeconds());
 
 		return endCal.getTime();
 	}
@@ -430,18 +433,18 @@ public class MainWindow implements Listener {
 				this.timestampCol.getText(), this.cols.getSelection());
 	}
 
-	public List<Date> getTimestamp(String timestampQuery) {
-		if (databaseConnection == null) {
+	public List<Date> getTimestamp(final String timestampQuery) {
+		if (this.databaseConnection == null) {
 			return new ArrayList<>();
 		}
-		return databaseConnection.readTimestamp(timestampQuery);
+		return this.databaseConnection.readTimestamp(timestampQuery);
 	}
 
-	public Map<String, List<Number>> getData(String dataQuery) {
-		if (databaseConnection == null) {
+	public Map<String, List<Number>> getData(final String dataQuery) {
+		if (this.databaseConnection == null) {
 			return new HashMap<>();
 		}
-		return databaseConnection.readDataFromCassandra(dataQuery);
+		return this.databaseConnection.readDataFromCassandra(dataQuery);
 	}
 
 	public static final String askUserForDirectory(final Shell shell, final int style, final String title,

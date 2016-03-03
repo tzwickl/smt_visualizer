@@ -21,16 +21,16 @@ public class CommandLineInterfaceService {
 		this.options = this.buildOptions();
 	}
 
-	public void parseArgsAndCreateConfig(String[] args) {
+	public void parseArgsAndCreateConfig(final String[] args) {
 		CommandLineParser parser = new DefaultParser();
 		try {
-			CommandLine cmdLine = parser.parse(options, args);
+			CommandLine cmdLine = parser.parse(this.options, args);
 			this.parseHelp(cmdLine);
 			this.logConfiguration();
 		} catch (ParseException e) {
 			System.err.println("Parsing failed. Reason: " + e.getMessage());
 			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp("org.fortiss.pmwt.smt.App [OPTION]....", options);
+			formatter.printHelp("org.fortiss.pmwt.smt.App [OPTION]....", this.options);
 			System.exit(0);
 		}
 	}
@@ -40,10 +40,10 @@ public class CommandLineInterfaceService {
 		logger.info("---- CONFIGURATION ----");
 	}
 
-	private void parseHelp(CommandLine cmdLine) {
+	private void parseHelp(final CommandLine cmdLine) {
 		if (cmdLine.hasOption(HELP_ARG)) {
 			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp("smt_visualizer.app [OPTION]....", options);
+			formatter.printHelp("smt_visualizer.app [OPTION]....", this.options);
 		}
 	}
 

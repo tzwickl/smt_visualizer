@@ -14,8 +14,9 @@ public class CassandraQueryCreator {
 
 	private static final Logger logger = LoggerFactory.getLogger(CassandraQueryCreator.class);
 
-	public static String createQuery(Date startTime, Date endTime, String hostname, String hostnameCol,
-			String keyspaceName, String tableName, String timestampCol, String... tables) {
+	public static String createQuery(final Date startTime, final Date endTime, final String hostname,
+			final String hostnameCol, final String keyspaceName, final String tableName, final String timestampCol,
+			final String... tables) {
 		StringBuilder cols = new StringBuilder();
 		String del = "";
 
@@ -33,11 +34,11 @@ public class CassandraQueryCreator {
 		return query;
 	}
 
-	public static String createHostNamesQuery(String column, String keyspace, String table) {
+	public static String createHostNamesQuery(final String column, final String keyspace, final String table) {
 		return "SELECT " + column + " FROM " + keyspace + "." + table + ";";
 	}
 
-	public static String createColumnNamesQuery(String keyspace, String table) {
+	public static String createColumnNamesQuery(final String keyspace, final String table) {
 		return "SELECT column_name FROM system.schema_columns WHERE keyspace_name = \'" + keyspace
 				+ "\' AND columnfamily_name = \'" + table + "\';";
 	}
@@ -46,7 +47,7 @@ public class CassandraQueryCreator {
 		return "SELECT keyspace_name FROM system.schema_columnfamilies;";
 	}
 
-	public static String createTableQuery(String keyspace) {
+	public static String createTableQuery(final String keyspace) {
 		return "SELECT columnfamily_name FROM system.schema_columnfamilies WHERE keyspace_name = \'" + keyspace + "\';";
 	}
 }

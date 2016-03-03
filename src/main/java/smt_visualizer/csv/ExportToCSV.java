@@ -15,19 +15,19 @@ public class ExportToCSV {
 	private static final Logger logger = LoggerFactory.getLogger(ExportToCSV.class);
 	private String seperator = ";";
 
-	public void exportToCSV(File targetFile, List<Date> timestamp, Map<String, List<Number>> data, String hostnameCol,
-			String hostname, String timestampCol) {
+	public void exportToCSV(final File targetFile, final List<Date> timestamp, final Map<String, List<Number>> data,
+			final String hostnameCol, final String hostname, final String timestampCol) {
 		try {
 			FileWriter writer = new FileWriter(targetFile);
 
 			StringBuilder stringBuilder = new StringBuilder();
 			String del = "";
 
-			stringBuilder.append(hostnameCol).append(seperator).append(timestampCol).append(seperator);
+			stringBuilder.append(hostnameCol).append(this.seperator).append(timestampCol).append(this.seperator);
 
 			for (String header : data.keySet()) {
 				stringBuilder.append(del).append(header);
-				del = seperator;
+				del = this.seperator;
 			}
 
 			writer.write(stringBuilder.toString());
@@ -36,10 +36,10 @@ public class ExportToCSV {
 			for (int row = 0; row < timestamp.size(); row++) {
 				stringBuilder = new StringBuilder();
 				del = "";
-				stringBuilder.append(hostname).append(seperator).append(timestamp.get(row)).append(seperator);
+				stringBuilder.append(hostname).append(this.seperator).append(timestamp.get(row)).append(this.seperator);
 				for (List<Number> vals : data.values()) {
 					stringBuilder.append(del).append(vals.get(row));
-					del = seperator;
+					del = this.seperator;
 				}
 
 				writer.write(stringBuilder.toString());

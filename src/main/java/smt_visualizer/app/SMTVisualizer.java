@@ -16,7 +16,7 @@ class SMTVisualizer {
 
 	private static final Logger logger = LoggerFactory.getLogger(SMTVisualizer.class);
 
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		logger.info("SMTVisualizer started with the following arguments: " + Arrays.toString(args));
 		CommandLineInterfaceService cliService = new CommandLineInterfaceService();
 		cliService.parseArgsAndCreateConfig(args);

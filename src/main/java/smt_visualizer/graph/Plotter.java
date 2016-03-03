@@ -24,7 +24,8 @@ public final class Plotter extends JFrame {
 	private int xDim;
 	private int yDim;
 
-	public Plotter(String title, String xAxisTitle, String yAxisTitle, int xDim, int yDim) {
+	public Plotter(final String title, final String xAxisTitle, final String yAxisTitle, final int xDim,
+			final int yDim) {
 		super(title);
 		this.xAxisTitle = xAxisTitle;
 		this.yAxisTitle = yAxisTitle;
@@ -32,12 +33,12 @@ public final class Plotter extends JFrame {
 		this.yDim = yDim;
 	}
 
-	public void plotData(DefaultCategoryDataset dataset) {
+	public void plotData(final DefaultCategoryDataset dataset) {
 		JFreeChart lineChart = ChartFactory.createLineChart(super.getTitle(), this.xAxisTitle, this.yAxisTitle, dataset,
 				PlotOrientation.VERTICAL, true, true, true);
 
 		ChartPanel chartPanel = new ChartPanel(lineChart);
-		chartPanel.setPreferredSize(new Dimension(xDim, yDim));
+		chartPanel.setPreferredSize(new Dimension(this.xDim, this.yDim));
 		setContentPane(chartPanel);
 	}
 }

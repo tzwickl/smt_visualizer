@@ -31,17 +31,18 @@ public class Cassandra implements DatabaseConnection {
 	private Cluster cluster;
 	private Session session;
 
-	public Cassandra(String host, String keyspace) {
+	public Cassandra(final String host, final String keyspace) {
 		this.cluster = Cluster.builder().addContactPoint(host).build();
 		if (keyspace == null) {
-			this.session = cluster.connect();
+			this.session = this.cluster.connect();
 		} else {
-			this.session = cluster.connect(keyspace);
+			this.session = this.cluster.connect(keyspace);
 		}
 	}
 
-	public Map<String, List<Number>> readDataFromCassandra(String query) {
-		ResultSet results = session.execute(query);
+	@Override
+	public Map<String, List<Number>> readDataFromCassandra(final String query) {
+		ResultSet results = this.session.execute(query);
 
 		Map<String, List<Number>> map = new HashMap<String, List<Number>>();
 
@@ -73,10 +74,11 @@ public class Cassandra implements DatabaseConnection {
 		return map;
 	}
 
-	public List<Date> readTimestamp(String query) {
+	@Override
+	public List<Date> readTimestamp(final String query) {
 		List<Date> list = new ArrayList<>();
 
-		ResultSet results = session.execute(query);
+		ResultSet results = this.session.execute(query);
 
 		for (Row row : results) {
 			Object object = row.getObject(0);
@@ -91,8 +93,9 @@ public class Cassandra implements DatabaseConnection {
 		return list;
 	}
 
+	@Override
 	public Set<String> getKeyspaces() {
-		ResultSet results = session.execute(CassandraQueryCreator.createKeyspaceQuery());
+		ResultSet results = this.session.execute(CassandraQueryCreator.createKeyspaceQuery());
 
 		Set<String> keyspace = new HashSet<String>();
 		for (Row row : results) {
@@ -102,8 +105,9 @@ public class Cassandra implements DatabaseConnection {
 		return keyspace;
 	}
 
-	public List<String> getTables(String keyspace) {
-		ResultSet results = session.execute(CassandraQueryCreator.createTableQuery(keyspace));
+	@Override
+	public List<String> getTables(final String keyspace) {
+		ResultSet results = this.session.execute(CassandraQueryCreator.createTableQuery(keyspace));
 
 		List<String> tables = new ArrayList<String>();
 		for (Row row : results) {
@@ -113,8 +117,9 @@ public class Cassandra implements DatabaseConnection {
 		return tables;
 	}
 
-	public List<String> getColumns(String keyspace, String table) {
-		ResultSet results = session.execute(CassandraQueryCreator.createColumnNamesQuery(keyspace, table));
+	@Override
+	public List<String> getColumns(final String keyspace, final String table) {
+		ResultSet results = this.session.execute(CassandraQueryCreator.createColumnNamesQuery(keyspace, table));
 
 		List<String> cols = new ArrayList<String>();
 		for (Row row : results) {
@@ -124,8 +129,9 @@ public class Cassandra implements DatabaseConnection {
 		return cols;
 	}
 
-	public Set<String> getHostNames(String keyspace, String table, String column) {
-		ResultSet results = session.execute(CassandraQueryCreator.createHostNamesQuery(column, keyspace, table));
+	@Override
+	public Set<String> getHostNames(final String keyspace, final String table, final String column) {
+		ResultSet results = this.session.execute(CassandraQueryCreator.createHostNamesQuery(column, keyspace, table));
 
 		Set<String> hostNames = new HashSet<String>();
 		for (Row row : results) {
