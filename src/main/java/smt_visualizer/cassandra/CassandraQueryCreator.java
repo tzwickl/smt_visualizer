@@ -10,9 +10,9 @@ import org.slf4j.LoggerFactory;
  * @author tzwickl
  *
  */
-public class QueryCreator {
+public class CassandraQueryCreator {
 
-	private static final Logger logger = LoggerFactory.getLogger(QueryCreator.class);
+	private static final Logger logger = LoggerFactory.getLogger(CassandraQueryCreator.class);
 
 	public static String createQuery(Date startTime, Date endTime, String hostname, String hostnameCol,
 			String keyspaceName, String tableName, String timestampCol, String... tables) {

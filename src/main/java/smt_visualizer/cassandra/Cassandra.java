@@ -17,12 +17,14 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
 
+import smt_visualizer.database.DatabaseConnection;
+
 /**
  * 
  * @author tzwickl
  *
  */
-public class Cassandra {
+public class Cassandra implements DatabaseConnection {
 
 	private static final Logger logger = LoggerFactory.getLogger(Cassandra.class);
 
@@ -38,16 +40,16 @@ public class Cassandra {
 		}
 	}
 
-	public Map<String, List<Double>> readDataFromCassandra(String query) {
+	public Map<String, List<Number>> readDataFromCassandra(String query) {
 		ResultSet results = session.execute(query);
 
-		Map<String, List<Double>> map = new HashMap<String, List<Double>>();
+		Map<String, List<Number>> map = new HashMap<String, List<Number>>();
 
 		for (Row row : results) {
 			ColumnDefinitions columnDefinitions = row.getColumnDefinitions();
 			for (int i = 0; i < columnDefinitions.size(); i++) {
 				if (!map.containsKey(columnDefinitions.getName(i))) {
-					map.put(columnDefinitions.getName(i), new ArrayList<Double>());
+					map.put(columnDefinitions.getName(i), new ArrayList<Number>());
 				}
 			}
 
@@ -55,21 +57,14 @@ public class Cassandra {
 				Object object = row.getObject(i);
 				if (object != null) {
 					if (object instanceof Number) {
-						List<Double> list = map.get(columnDefinitions.getName(i));
-						if (object instanceof Long) {
-							Long val = (Long) object;
-							list.add(val.doubleValue());
-						} else if (object instanceof Integer) {
-							Integer val = (Integer) object;
-							list.add(val.doubleValue());
-						} else {
-							list.add((Double) object);
-						}
+						List<Number> list = map.get(columnDefinitions.getName(i));
+
+						list.add((Number) object);
 					} else {
 						logger.error("Invalid data format: Data needs to be of format Number");
 					}
 				} else {
-					List<Double> list = map.get(columnDefinitions.getName(i));
+					List<Number> list = map.get(columnDefinitions.getName(i));
 					list.add(0.0);
 				}
 			}
@@ -96,10 +91,10 @@ public class Cassandra {
 		return list;
 	}
 
-	public List<String> getKeyspaces() {
-		ResultSet results = session.execute(QueryCreator.createKeyspaceQuery());
+	public Set<String> getKeyspaces() {
+		ResultSet results = session.execute(CassandraQueryCreator.createKeyspaceQuery());
 
-		List<String> keyspace = new ArrayList<String>();
+		Set<String> keyspace = new HashSet<String>();
 		for (Row row : results) {
 			keyspace.add(row.getString(0));
 		}
@@ -108,7 +103,7 @@ public class Cassandra {
 	}
 
 	public List<String> getTables(String keyspace) {
-		ResultSet results = session.execute(QueryCreator.createTableQuery(keyspace));
+		ResultSet results = session.execute(CassandraQueryCreator.createTableQuery(keyspace));
 
 		List<String> tables = new ArrayList<String>();
 		for (Row row : results) {
@@ -119,7 +114,7 @@ public class Cassandra {
 	}
 
 	public List<String> getColumns(String keyspace, String table) {
-		ResultSet results = session.execute(QueryCreator.createColumnNamesQuery(keyspace, table));
+		ResultSet results = session.execute(CassandraQueryCreator.createColumnNamesQuery(keyspace, table));
 
 		List<String> cols = new ArrayList<String>();
 		for (Row row : results) {
@@ -130,7 +125,7 @@ public class Cassandra {
 	}
 
 	public Set<String> getHostNames(String keyspace, String table, String column) {
-		ResultSet results = session.execute(QueryCreator.createHostNamesQuery(column, keyspace, table));
+		ResultSet results = session.execute(CassandraQueryCreator.createHostNamesQuery(column, keyspace, table));
 
 		Set<String> hostNames = new HashSet<String>();
 		for (Row row : results) {

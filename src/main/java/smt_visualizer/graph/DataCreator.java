@@ -8,11 +8,11 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 public class DataCreator {
 
-	public static DefaultCategoryDataset createDataset(List<Date> timestamp, Map<String, List<Double>> data) {
+	public static DefaultCategoryDataset createDataset(List<Date> timestamp, Map<String, List<Number>> data) {
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
 		for (String graph : data.keySet()) {
-			List<Double> vals = data.get(graph);
+			List<Number> vals = data.get(graph);
 
 			for (int i = 0; i < vals.size() && i < timestamp.size(); i++) {
 				dataset.addValue(vals.get(i), graph, timestamp.get(i));

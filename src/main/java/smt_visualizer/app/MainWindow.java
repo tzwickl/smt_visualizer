@@ -34,8 +34,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import smt_visualizer.cassandra.Cassandra;
-import smt_visualizer.cassandra.QueryCreator;
+import smt_visualizer.cassandra.CassandraQueryCreator;
 import smt_visualizer.csv.ExportToCSV;
+import smt_visualizer.database.DatabaseConnection;
 import smt_visualizer.graph.DataCreator;
 import smt_visualizer.graph.Plotter;
 
@@ -63,7 +64,7 @@ public class MainWindow implements Listener {
 	private Label lblKeyspace;
 	private Label lblTableName;
 
-	private Cassandra cassandraConnection;
+	private DatabaseConnection databaseConnection;
 	private Combo hostname;
 	private Combo hostnameCol;
 	private Combo timestampCol;
@@ -226,7 +227,7 @@ public class MainWindow implements Listener {
 				public void run() {
 					try {
 						final List<Date> timestamp = getTimestamp(timestampQuery);
-						final Map<String, List<Double>> data = getData(dataQuery);
+						final Map<String, List<Number>> data = getData(dataQuery);
 
 						shell.getDisplay().asyncExec(new Runnable() {
 
@@ -293,7 +294,7 @@ public class MainWindow implements Listener {
 				public void run() {
 					try {
 						final List<Date> timestamp = getTimestamp(timestampQuery);
-						final Map<String, List<Double>> data = getData(dataQuery);
+						final Map<String, List<Number>> data = getData(dataQuery);
 
 						shell.getDisplay().asyncExec(new Runnable() {
 
@@ -328,8 +329,8 @@ public class MainWindow implements Listener {
 			final String keyspace = this.keyspace.getText();
 			final String tableName = this.tableName.getText();
 
-			cassandraConnection = new Cassandra(ipAddress, keyspace);
-			List<String> colNames = cassandraConnection.getColumns(keyspace, tableName);
+			databaseConnection = new Cassandra(ipAddress, keyspace);
+			List<String> colNames = databaseConnection.getColumns(keyspace, tableName);
 
 			hostnameCol.removeAll();
 			for (String colName : colNames) {
@@ -349,7 +350,7 @@ public class MainWindow implements Listener {
 			shell.layout();
 
 		} else if (widget == this.hostnameCol) {
-			Set<String> hostNames = cassandraConnection.getHostNames(this.keyspace.getText(), this.tableName.getText(),
+			Set<String> hostNames = databaseConnection.getHostNames(this.keyspace.getText(), this.tableName.getText(),
 					this.hostnameCol.getText());
 
 			hostname.removeAll();
@@ -359,9 +360,9 @@ public class MainWindow implements Listener {
 
 			shell.layout();
 		} else if (widget == this.keyspace) {
-			this.cassandraConnection = new Cassandra(this.ipAddress.getText(), this.keyspace.getText());
+			this.databaseConnection = new Cassandra(this.ipAddress.getText(), this.keyspace.getText());
 
-			List<String> tables = cassandraConnection.getTables(this.keyspace.getText());
+			List<String> tables = databaseConnection.getTables(this.keyspace.getText());
 
 			this.tableName.removeAll();
 			this.hostname.removeAll();
@@ -373,9 +374,9 @@ public class MainWindow implements Listener {
 
 			shell.layout();
 		} else if (widget == this.btnConnect) {
-			this.cassandraConnection = new Cassandra(this.ipAddress.getText(), null);
+			this.databaseConnection = new Cassandra(this.ipAddress.getText(), null);
 
-			List<String> keyspaces = cassandraConnection.getKeyspaces();
+			Set<String> keyspaces = databaseConnection.getKeyspaces();
 
 			this.keyspace.removeAll();
 			this.tableName.removeAll();
@@ -418,29 +419,29 @@ public class MainWindow implements Listener {
 	}
 
 	public String getTimestampQuery() {
-		return QueryCreator.createQuery(getStartDate(), getEndDate(), this.hostname.getText(),
+		return CassandraQueryCreator.createQuery(getStartDate(), getEndDate(), this.hostname.getText(),
 				this.hostnameCol.getText(), this.keyspace.getText(), this.tableName.getText(),
 				this.timestampCol.getText(), this.timestampCol.getText());
 	}
 
 	public String getDataQuery() {
-		return QueryCreator.createQuery(getStartDate(), getEndDate(), this.hostname.getText(),
+		return CassandraQueryCreator.createQuery(getStartDate(), getEndDate(), this.hostname.getText(),
 				this.hostnameCol.getText(), this.keyspace.getText(), this.tableName.getText(),
 				this.timestampCol.getText(), this.cols.getSelection());
 	}
 
 	public List<Date> getTimestamp(String timestampQuery) {
-		if (cassandraConnection == null) {
+		if (databaseConnection == null) {
 			return new ArrayList<>();
 		}
-		return cassandraConnection.readTimestamp(timestampQuery);
+		return databaseConnection.readTimestamp(timestampQuery);
 	}
 
-	public Map<String, List<Double>> getData(String dataQuery) {
-		if (cassandraConnection == null) {
+	public Map<String, List<Number>> getData(String dataQuery) {
+		if (databaseConnection == null) {
 			return new HashMap<>();
 		}
-		return cassandraConnection.readDataFromCassandra(dataQuery);
+		return databaseConnection.readDataFromCassandra(dataQuery);
 	}
 
 	public static final String askUserForDirectory(final Shell shell, final int style, final String title,
